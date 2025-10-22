@@ -2,9 +2,9 @@ package usecase
 
 import (
 	"context"
+	"trainer/internal/application"
 	"trainer/internal/application/dto"
 	"trainer/internal/domain/user"
-	"trainer/internal/infrastructure"
 
 	"github.com/google/uuid"
 )
@@ -12,10 +12,10 @@ import (
 type RefreshToken struct {
 	userService    *user.Service
 	userRepository user.Repository
-	jwtManager     *infrastructure.JwtManager
+	jwtManager     application.JwtManager
 }
 
-func NewRefreshToken(userService *user.Service, userRepository user.Repository, jwtManager *infrastructure.JwtManager) *RefreshToken {
+func NewRefreshToken(userService *user.Service, userRepository user.Repository, jwtManager application.JwtManager) *RefreshToken {
 	return &RefreshToken{
 		userService:    userService,
 		userRepository: userRepository,
@@ -49,7 +49,7 @@ func (r *RefreshToken) Execute(ctx context.Context, req dto.RefreshTokenRequest)
 		return nil, errSave
 	}
 
-	accessToken, err := r.jwtManager.Generate(infrastructure.TokenClaim{
+	accessToken, err := r.jwtManager.Generate(application.TokenClaim{
 		UserID: loggedUser.ID,
 		Role:   loggedUser.Role,
 	})

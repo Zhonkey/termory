@@ -2,18 +2,18 @@ package usecase
 
 import (
 	"context"
+	"trainer/internal/application"
 	"trainer/internal/application/dto"
 	"trainer/internal/domain/user"
-	"trainer/internal/infrastructure"
 )
 
 type AccessToken struct {
 	userService    *user.Service
 	userRepository user.Repository
-	jwtManager     *infrastructure.JwtManager
+	jwtManager     application.JwtManager
 }
 
-func NewAccessToken(userService *user.Service, userRepository user.Repository, jwtManager *infrastructure.JwtManager) *AccessToken {
+func NewAccessToken(userService *user.Service, userRepository user.Repository, jwtManager application.JwtManager) *AccessToken {
 	return &AccessToken{
 		userService:    userService,
 		userRepository: userRepository,
@@ -31,7 +31,7 @@ func (a *AccessToken) Execute(ctx context.Context, req dto.AccessTokenRequest) (
 		return nil, err
 	}
 
-	accessToken, err := a.jwtManager.Generate(infrastructure.TokenClaim{
+	accessToken, err := a.jwtManager.Generate(application.TokenClaim{
 		UserID: loggedUser.ID,
 		Role:   loggedUser.Role,
 	})

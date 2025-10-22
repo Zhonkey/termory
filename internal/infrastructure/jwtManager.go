@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"trainer/internal/application"
 	"trainer/internal/domain/user"
 
 	"github.com/dgrijalva/jwt-go"
@@ -15,12 +16,7 @@ type JwtManager struct {
 	ttl       time.Duration
 }
 
-type TokenClaim struct {
-	UserID uuid.UUID
-	Role   user.Role
-}
-
-func (m *JwtManager) Generate(claim TokenClaim) (string, error) {
+func (m *JwtManager) Generate(claim application.TokenClaim) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id": claim.UserID.String(),
 		"role":    string(claim.Role),
@@ -30,7 +26,7 @@ func (m *JwtManager) Generate(claim TokenClaim) (string, error) {
 	return token.SignedString([]byte(m.secretKey))
 }
 
-func (m *JwtManager) Parse(tokenStr string) (*TokenClaim, error) {
+func (m *JwtManager) Parse(tokenStr string) (*application.TokenClaim, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -74,7 +70,7 @@ func (m *JwtManager) Parse(tokenStr string) (*TokenClaim, error) {
 		return nil, fmt.Errorf("invalid user_id format: %w", err)
 	}
 
-	return &TokenClaim{
+	return &application.TokenClaim{
 		UserID: parsedUUID,
 		Role:   user.Role(role),
 	}, nil
