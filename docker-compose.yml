@@ -19,7 +19,7 @@ services:
     ports:
       - "30000:5432"
     volumes:
-      - /var/lib/trainer-postgres:/var/lib/postgresql/data:delegated
+      - trainer-postgres:/var/lib/postgresql/data:delegated
     environment:
       - POSTGRES_PASSWORD=trainer
       - POSTGRES_DB=trainer
@@ -33,3 +33,6 @@ services:
       - ./vue:/app
       - /app/node_modules
     command: npm run dev -- --host
+
+volumes:
+  trainer-postgres:
