@@ -44,6 +44,11 @@ func (s *Service) Login(ctx context.Context, email, password string) (*User, err
 }
 
 func (s *Service) NewUser(ctx context.Context, email, firstName, lastName, password, role string) (*User, error) {
+	existing, _ := s.repo.FindByEmail(ctx, email)
+	if existing != nil {
+		return nil, ErrEmailAlreadyUsed
+	}
+
 	hashedPassword, err := s.hasher.Hash(password)
 	if err != nil {
 		return nil, ErrInvalidPassword
