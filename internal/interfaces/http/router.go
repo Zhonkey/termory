@@ -25,7 +25,7 @@ func NewRouter(
 
 	//r.Use(corsMiddleware)
 
-	r.HandleFunc("swagger.json", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/swagger.json", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(swaggerJSON)
 	}).Methods("GET")
