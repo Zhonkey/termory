@@ -22,11 +22,11 @@ func NewRouter(
 	//r.Use(corsMiddleware)
 
 	// Swagger UI endpoints
-	swaggerJSON, err := os.ReadFile("swagger.json")
+	swaggerJSON, err := os.ReadFile("./docs/swagger.json")
 	if err != nil {
 		log.Fatal(err)
 	}
-	r.HandleFunc("./docs/swagger.json", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("swagger.json", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(swaggerJSON)
 	}).Methods("GET")
