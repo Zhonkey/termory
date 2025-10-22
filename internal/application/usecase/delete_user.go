@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"trainer/internal/application"
 	"trainer/internal/application/dto"
 	"trainer/internal/domain/user"
 
@@ -19,7 +20,7 @@ func NewDeleteUser(userRepository user.Repository) *DeleteUser {
 }
 
 func (u *DeleteUser) Execute(ctx context.Context, req dto.DeleteUserRequest) error {
-	if errValidate := validateDelete(req); errValidate != nil {
+	if errValidate := application.ValidateDTO(req); errValidate != nil {
 		return errValidate
 	}
 
@@ -33,11 +34,5 @@ func (u *DeleteUser) Execute(ctx context.Context, req dto.DeleteUserRequest) err
 		return err
 	}
 
-	return nil
-}
-
-func validateDelete(v interface{}) error {
-	// В реальном приложении используйте github.com/go-playground/validator
-	// validator.New().Struct(v)
 	return nil
 }

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"trainer/internal/application"
 	"trainer/internal/application/dto"
 	"trainer/internal/domain/user"
 )
@@ -17,7 +18,7 @@ func NewListUser(userRepository user.Repository) *ListUser {
 }
 
 func (u *ListUser) Execute(ctx context.Context, req dto.ListUserRequest) (*dto.ListUserResponse, error) {
-	if err := validateList(req); err != nil {
+	if err := application.ValidateDTO(req); err != nil {
 		return nil, err
 	}
 
@@ -26,10 +27,4 @@ func (u *ListUser) Execute(ctx context.Context, req dto.ListUserRequest) (*dto.L
 		return nil, err
 	}
 	return dto.NewUsersResponse(users), nil
-}
-
-func validateList(v interface{}) error {
-	// В реальном приложении используйте github.com/go-playground/validator
-	// validator.New().Struct(v)
-	return nil
 }

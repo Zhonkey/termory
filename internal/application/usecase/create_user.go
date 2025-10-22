@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"trainer/internal/application"
 	"trainer/internal/application/dto"
 	"trainer/internal/domain/user"
 )
@@ -20,9 +21,7 @@ func NewCreateUser(userService *user.Service, userRepository user.Repository) *C
 }
 
 func (u *CreateUser) Execute(ctx context.Context, req dto.CreateUserRequest) (*dto.UserResponse, error) {
-	ctx.Value("role")
-
-	if err := validateCreate(req); err != nil {
+	if err := application.ValidateDTO(req); err != nil {
 		return nil, err
 	}
 
@@ -48,10 +47,4 @@ func (u *CreateUser) Execute(ctx context.Context, req dto.CreateUserRequest) (*d
 	}
 
 	return dto.NewUserResponse(createdUser), nil
-}
-
-func validateCreate(v interface{}) error {
-	// В реальном приложении используйте github.com/go-playground/validator
-	// validator.New().Struct(v)
-	return nil
 }

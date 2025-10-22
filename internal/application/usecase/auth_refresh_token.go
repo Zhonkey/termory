@@ -24,9 +24,9 @@ func NewRefreshToken(userService *user.Service, userRepository user.Repository, 
 }
 
 func (r *RefreshToken) Execute(ctx context.Context, req dto.RefreshTokenRequest) (*dto.TokenResponse, error) {
-	//if errValidate := validateCreate(req); errValidate != nil {
-	//	return nil, errValidate
-	//}
+	if errValidate := application.ValidateDTO(req); errValidate != nil {
+		return nil, errValidate
+	}
 
 	refreshToken, err := uuid.Parse(req.RefreshToken)
 	if err != nil {

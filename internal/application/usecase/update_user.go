@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"trainer/internal/application"
 	"trainer/internal/application/dto"
 	"trainer/internal/domain/user"
 
@@ -22,7 +23,7 @@ func NewUpdateUser(userService *user.Service, userRepository user.Repository) *U
 }
 
 func (u *UpdateUser) Execute(ctx context.Context, req dto.UpdateUserRequest) (*dto.UserResponse, error) {
-	if errValidate := validateUpdate(req); errValidate != nil {
+	if errValidate := application.ValidateDTO(req); errValidate != nil {
 		return nil, errValidate
 	}
 
@@ -54,10 +55,4 @@ func (u *UpdateUser) Execute(ctx context.Context, req dto.UpdateUserRequest) (*d
 	}
 
 	return dto.NewUserResponse(userModel), nil
-}
-
-func validateUpdate(v interface{}) error {
-	// В реальном приложении используйте github.com/go-playground/validator
-	// validator.New().Struct(v)
-	return nil
 }

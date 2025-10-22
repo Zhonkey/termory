@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"trainer/internal/application"
 	"trainer/internal/application/dto"
 	"trainer/internal/domain/user"
 
@@ -20,7 +21,7 @@ func NewGetUser(userRepository user.Repository) *GetUser {
 }
 
 func (u *GetUser) Execute(ctx context.Context, req dto.GetUserRequest) (*dto.UserResponse, error) {
-	if err := validateGet(req); err != nil {
+	if err := application.ValidateDTO(req); err != nil {
 		return nil, err
 	}
 
@@ -40,10 +41,4 @@ func (u *GetUser) Execute(ctx context.Context, req dto.GetUserRequest) (*dto.Use
 	}
 
 	return dto.NewUserResponse(userModel), nil
-}
-
-func validateGet(v interface{}) error {
-	// В реальном приложении используйте github.com/go-playground/validator
-	// validator.New().Struct(v)
-	return nil
 }

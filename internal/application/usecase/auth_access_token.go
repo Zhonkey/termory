@@ -22,9 +22,9 @@ func NewAccessToken(userService *user.Service, userRepository user.Repository, j
 }
 
 func (a *AccessToken) Execute(ctx context.Context, req dto.AccessTokenRequest) (*dto.TokenResponse, error) {
-	//if errValidate := validateCreate(req); errValidate != nil {
-	//	return nil, errValidate
-	//}
+	if errValidate := application.ValidateDTO(req); errValidate != nil {
+		return nil, errValidate
+	}
 
 	loggedUser, err := a.userService.Login(ctx, req.Email, req.Password)
 	if err != nil {

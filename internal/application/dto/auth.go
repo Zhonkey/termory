@@ -3,11 +3,11 @@ package dto
 import "trainer/internal/domain/user"
 
 type AccessTokenRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `validate:"required,email" json:"email"`
+	Password string `validate:"required" json:"password"`
 }
 type RefreshTokenRequest struct {
-	RefreshToken string `json:"refresh_token"`
+	RefreshToken string `validate:"required" json:"refresh_token"`
 }
 
 type TokenResponse struct {
