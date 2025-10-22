@@ -75,9 +75,14 @@ run-local: build-local
 	./bin/api
 
 # Запуск миграций локально
-migrate-local: build-local
+migrate-up-local: build-local
 	@echo "Running migrations..."
 	./bin/migrate up
+
+# Запуск миграций локально
+migrate-down-local: build-local
+	@echo "Running migrations..."
+	./bin/migrate down
 
 # Помощь
 help:
@@ -104,7 +109,8 @@ help:
 	@echo "=== Local Build Commands ==="
 	@echo "make build-local    - Build binaries locally (no Docker)"
 	@echo "make run-local      - Run API locally"
-	@echo "make migrate-local  - Run migrations locally"
+	@echo "make migrate-up-local  - Run migrations locally"
+	@echo "make migrate-down-local  - Down migrations locally"
 	@echo ""
 	@echo "make help           - Show this help message"
 

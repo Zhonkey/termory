@@ -21,7 +21,7 @@ const i18n = createI18n({
 })
 
 const app = createApp(App)
-app.use(router)
 app.use(pinia)
+app.use(router)
 app.use(i18n)
 app.mount('#app')

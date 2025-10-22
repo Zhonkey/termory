@@ -16,6 +16,13 @@ type JwtManager struct {
 	ttl       time.Duration
 }
 
+func NewJwtManager(secretKey string, ttl time.Duration) application.TokenManager {
+	return &JwtManager{
+		secretKey: secretKey,
+		ttl:       ttl,
+	}
+}
+
 func (m *JwtManager) Generate(claim application.TokenClaim) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id": claim.UserID.String(),

@@ -3,7 +3,7 @@
     <h3>Список пользователей</h3>
     <ul>
       <li v-for="user in users" :key="user.id">
-        <router-link :to="'/users/' + user.id">{{ user.name }}</router-link>
+        <router-link :to="'/users/' + user.id">{{ user.email }}</router-link>
       </li>
     </ul>
   </div>
@@ -17,10 +17,6 @@ const users = ref([])
 
 onMounted(async () => {
   const res = await UserService.list()
-  if (res.ok) {
-    users.value = await res.json()
-  } else {
-    console.error('Ошибка загрузки пользователей')
-  }
+  users.value = res.users
 })
 </script>

@@ -47,11 +47,11 @@ func NewRouter(
 	r.HandleFunc("/auth/refresh_token", loginHandler.RefreshToken).Methods("POST")
 	r.HandleFunc("/users", userHandler.CreateUser).Methods("PUT")
 
-	api := r.PathPrefix("/api").Subrouter()
+	api := r.NewRoute().Subrouter()
 	api.Use(authMiddleware)
 
-	adminRoutes := api.PathPrefix("/admin").Subrouter()
-	adminRoutes.Use(adminMiddleware)
+	adminRoutes := api.NewRoute().Subrouter()
+	//adminRoutes.Use(adminMiddleware)
 	adminRoutes.HandleFunc("/users", userHandler.ListUser).Methods("GET")
 	adminRoutes.HandleFunc("/users/{id}", userHandler.UpdateUser).Methods("POST")
 	adminRoutes.HandleFunc("/users/{id}", userHandler.GetUser).Methods("GET")

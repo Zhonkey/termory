@@ -1,6 +1,9 @@
 package app
 
 import (
+	"log"
+	"os"
+	"strconv"
 	"time"
 	"trainer/internal/application"
 	"trainer/internal/application/usecase"
@@ -25,7 +28,12 @@ func NewContainer(db *database.DB) (*Container, error) {
 	userRepo := database.NewUserRepository(db)
 
 	passwordHasher := infrastructure.NewBcryptHasher(10)
-	tokenManager := &infrastructure.JwtManager{}
+
+	durationMinutes, err := strconv.Atoi(os.Getenv("JWT_DURATION_IN_MINUTE"))
+	if err != nil {
+		log.Fatalf("invalid JWT_DURATION_IN_MINUTE: %v", err)
+	}
+	tokenManager := infrastructure.NewJwtManager(os.Getenv("JWT_SECRET"), time.Duration(durationMinutes)*time.Minute)
 
 	userService := user.NewService(userRepo, passwordHasher, time.Hour*24*30)
 

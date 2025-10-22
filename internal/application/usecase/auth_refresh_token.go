@@ -44,7 +44,7 @@ func (r *RefreshToken) Execute(ctx context.Context, req dto.RefreshTokenRequest)
 		return nil, err
 	}
 
-	errSave := r.userRepository.Save(ctx, loggedUser)
+	errSave := r.userRepository.Update(ctx, loggedUser)
 	if errSave != nil {
 		return nil, errSave
 	}
@@ -58,5 +58,5 @@ func (r *RefreshToken) Execute(ctx context.Context, req dto.RefreshTokenRequest)
 		return nil, err
 	}
 
-	return dto.NewTokenResponse(accessToken, newToken.ID.String()), nil
+	return dto.NewTokenResponse(accessToken, newToken.ID.String(), loggedUser), nil
 }

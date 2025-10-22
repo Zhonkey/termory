@@ -11,9 +11,8 @@ export const useAuthStore = defineStore('auth', {
 
     actions: {
         async login(email, password) {
-            const data = AuthService.login(email, password)
-
-            if (!res.ok) throw new Error(data.message || 'Ошибка авторизации')
+            const data = await AuthService.login(email, password)
+            if (!data.access_token || !data.refresh_token) throw new Error(data.message || 'Ошибка авторизации')
 
             this.accessToken = data.access_token
             this.refreshToken = data.refresh_token
@@ -23,10 +22,11 @@ export const useAuthStore = defineStore('auth', {
             localStorage.setItem('refresh_token', data.refresh_token)
             localStorage.setItem('user', JSON.stringify(data.user))
         },
-        async register(email, password) {
-            const data = AuthService.register(email, password)
 
-            if (!res.ok) throw new Error(data.message || 'Ошибка авторизации')
+        async register(email, password) {
+            const data = await AuthService.register(email, password)
+
+            if (!data.access_token || !data.refresh_token) throw new Error(data.message || 'Ошибка авторизации')
 
             this.accessToken = data.access_token
             this.refreshToken = data.refresh_token
@@ -48,11 +48,14 @@ export const useAuthStore = defineStore('auth', {
             this.refreshing = true
 
             try {
-                const data = AuthService.refresh(this.refreshToken)
+                const data = await AuthService.refresh(this.refreshToken)
 
-                if (res.ok && data.access_token) {
+                console.log(data)
+
+                if (data.access_token) {
                     this.accessToken = data.access_token
                     localStorage.setItem('access_token', data.access_token)
+                    localStorage.setItem('refresh_token', data.refresh_token)
                 } else {
                     this.logout()
                 }

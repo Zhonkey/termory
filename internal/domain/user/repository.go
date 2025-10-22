@@ -9,6 +9,8 @@ import (
 type Repository interface {
 	FindByID(ctx context.Context, id uuid.UUID) (*User, error)
 
+	FindAll(ctx context.Context) ([]*User, error)
+
 	FindByEmail(ctx context.Context, email string) (*User, error)
 
 	FindByToken(ctx context.Context, token uuid.UUID) (*User, error)

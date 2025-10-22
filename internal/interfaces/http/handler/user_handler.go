@@ -108,16 +108,9 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) ListUser(w http.ResponseWriter, r *http.Request) {
-	var req dto.GetUserRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		response.BadRequest(w, err)
-		return
-	}
+	var req dto.ListUserRequest
 
-	vars := mux.Vars(r)
-	req.Id = vars["id"]
-
-	userResp, err := h.getUserUC.Execute(r.Context(), req)
+	userResp, err := h.listUserUC.Execute(r.Context(), req)
 	if err != nil {
 		response.InternalError(w, err)
 		return

@@ -50,5 +50,5 @@ func (a *AccessToken) Execute(ctx context.Context, req dto.AccessTokenRequest) (
 		return nil, errSave
 	}
 
-	return dto.NewTokenResponse(accessToken, refreshToken.ID.String()), nil
+	return dto.NewTokenResponse(accessToken, refreshToken.ID.String(), loggedUser), nil
 }

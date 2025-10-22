@@ -2,17 +2,14 @@ import { baseApi } from '../utils/baseApi'
 
 export const AuthService = {
     async login(email, password) {
-        const { data } = await baseApi.post('/auth/access_token', { email: email, password: password })
-        return data
+        return await baseApi.post('/auth/access_token', { email: email, password: password })
     },
 
     async register(email, password) {
-        const { data } = await baseApi.put('/users', { email: email, password: password })
-        return data
+        return await baseApi.put('/users', { email: email, password: password })
     },
 
     async refresh(refreshToken) {
-        const { data } = await baseApi.post('/auth/refresh_token', { refresh_token: refreshToken })
-        return data
+        return await baseApi.post('/auth/refresh_token', { refresh_token: refreshToken })
     }
 }

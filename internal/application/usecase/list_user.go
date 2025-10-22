@@ -2,11 +2,8 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"trainer/internal/application/dto"
 	"trainer/internal/domain/user"
-
-	"github.com/google/uuid"
 )
 
 type ListUser struct {
@@ -19,27 +16,16 @@ func NewListUser(userRepository user.Repository) *ListUser {
 	}
 }
 
-func (u *ListUser) Execute(ctx context.Context, req dto.GetUserRequest) (*dto.UserResponse, error) {
+func (u *ListUser) Execute(ctx context.Context, req dto.ListUserRequest) (*dto.ListUserResponse, error) {
 	if err := validateList(req); err != nil {
 		return nil, err
 	}
 
-	userId, err := uuid.Parse(req.Id)
+	users, err := u.userRepository.FindAll(ctx)
 	if err != nil {
 		return nil, err
 	}
-
-	userModel, err := u.userRepository.FindByID(ctx, userId)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if userModel == nil {
-		return nil, errors.New("Not existed user")
-	}
-
-	return dto.NewUserResponse(userModel), nil
+	return dto.NewUsersResponse(users), nil
 }
 
 func validateList(v interface{}) error {

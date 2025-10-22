@@ -1,4 +1,4 @@
-import { baseRequest } from './baseApi'
+import { simpleRequest} from './baseApi'
 import { useAuthStore } from '../stores/auth'
 
 export async function authRequest(endpoint, options = {}) {
@@ -13,16 +13,20 @@ export async function authRequest(endpoint, options = {}) {
         headers['Authorization'] = `Bearer ${auth.accessToken}`
     }
 
-    let res = await baseRequest(endpoint, { ...options, headers })
+    let response = await simpleRequest(endpoint, { ...options, headers })
 
-    if (res.status === 401 && auth.refreshToken) {
+    if (response.status === 401 && auth.refreshToken) {
         await auth.refresh()
 
         headers['Authorization'] = `Bearer ${auth.accessToken}`
-        res = await baseRequest(endpoint, { ...options, headers })
+        response = await simpleRequest(endpoint, { ...options, headers })
     }
 
-    return res
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+    }
+
+    return response.status !== 204 ? await response.json() : null
 }
 
 export const authApi = {

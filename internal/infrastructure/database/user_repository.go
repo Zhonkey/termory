@@ -14,6 +14,33 @@ type UserRepository struct {
 	db *DB
 }
 
+func (r *UserRepository) FindAll(ctx context.Context) ([]*user.User, error) {
+	query := `
+		SELECT 
+			u.id, u.role, u.email, u.first_name, u.last_name, u.password, 
+			u.created_at, u.updated_at
+		FROM users u
+	`
+
+	rows, err := r.db.pool.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	users := make([]*user.User, 0)
+	for rows.Next() {
+		userModel, err := r.scanUser(ctx, rows)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, userModel)
+	}
+
+	return users, nil
+}
+
 func NewUserRepository(db *DB) user.Repository {
 	return &UserRepository{
 		db: db,
@@ -54,7 +81,7 @@ func (r *UserRepository) FindByToken(ctx context.Context, token uuid.UUID) (*use
 			u.id, u.role, u.email, u.first_name, u.last_name, u.password, 
 			u.created_at, u.updated_at
 		FROM users u
-		LEFT JOIN refresh_tokens ON refresh_tokens.userid = u.id
+		LEFT JOIN refresh_tokens ON refresh_tokens.user_id = u.id
 		WHERE refresh_tokens.id = $1
 	`
 
