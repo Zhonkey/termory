@@ -1,7 +1,9 @@
 package http
 
 import (
+	"log"
 	"net/http"
+	"os"
 	"trainer/internal/interfaces/http/handler"
 
 	"github.com/gorilla/mux"
@@ -18,6 +20,30 @@ func NewRouter(
 
 	r.Use(authMiddleware)
 	//r.Use(corsMiddleware)
+
+	// Swagger UI endpoints
+	swaggerJSON, err := os.ReadFile("swagger.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	r.HandleFunc("/swagger.json", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(swaggerJSON)
+	}).Methods("GET")
+
+	swaggerHTML, err := os.ReadFile("swagger.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	r.HandleFunc("/swagger", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html")
+		w.Write([]byte(swaggerHTML))
+	}).Methods("GET")
+
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/swagger", http.StatusMovedPermanently)
+	}).Methods("GET")
 
 	r.HandleFunc("/auth/access_token", loginHandler.AccessToken).Methods("POST")
 	r.HandleFunc("/auth/refresh_token", loginHandler.RefreshToken).Methods("POST")

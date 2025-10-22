@@ -1,5 +1,5 @@
 # Multi-stage build для production
-FROM golang:1.22-alpine AS builder
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /build
 
@@ -31,7 +31,7 @@ FROM alpine:latest
 WORKDIR /app
 
 # Установка необходимых пакетов
-RUN apk add --no-cache tzdata postgresql-client
+RUN apk add --no-cache ca-certificates tzdata postgresql-client
 
 # Копирование бинарников из builder
 COPY --from=builder /build/api /app/api
