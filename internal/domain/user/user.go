@@ -115,7 +115,7 @@ func (u *User) addRefreshToken(newToken *RefreshToken) error {
 	return nil
 }
 
-func (u *User) RevokeRefreshToken(tokenID uuid.UUID) error {
+func (u *User) revokeRefreshToken(tokenID uuid.UUID) error {
 	token, exists := u.refreshTokens[tokenID]
 	if !exists {
 		return errors.New("refresh token not found")

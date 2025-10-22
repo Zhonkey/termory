@@ -92,7 +92,10 @@ func (s *Service) CreateRefreshToken(ctx context.Context, u *User) (*RefreshToke
 }
 
 func (s *Service) RenewRefreshToken(ctx context.Context, u *User, token uuid.UUID) (*RefreshToken, error) {
-	u.revokeRefreshToken(token)
+	err := u.revokeRefreshToken(token)
+	if err != nil {
+		return nil, err
+	}
 
 	newToken, err := s.CreateRefreshToken(ctx, u)
 
