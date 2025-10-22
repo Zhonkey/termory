@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type JwtManager interface {
+type TokenManager interface {
 	Generate(claim TokenClaim) (string, error)
 	Parse(tokenStr string) (*TokenClaim, error)
 }

@@ -10,10 +10,10 @@ import (
 type AccessToken struct {
 	userService    *user.Service
 	userRepository user.Repository
-	jwtManager     application.JwtManager
+	jwtManager     application.TokenManager
 }
 
-func NewAccessToken(userService *user.Service, userRepository user.Repository, jwtManager application.JwtManager) *AccessToken {
+func NewAccessToken(userService *user.Service, userRepository user.Repository, jwtManager application.TokenManager) *AccessToken {
 	return &AccessToken{
 		userService:    userService,
 		userRepository: userRepository,

@@ -12,10 +12,10 @@ import (
 type RefreshToken struct {
 	userService    *user.Service
 	userRepository user.Repository
-	jwtManager     application.JwtManager
+	jwtManager     application.TokenManager
 }
 
-func NewRefreshToken(userService *user.Service, userRepository user.Repository, jwtManager application.JwtManager) *RefreshToken {
+func NewRefreshToken(userService *user.Service, userRepository user.Repository, jwtManager application.TokenManager) *RefreshToken {
 	return &RefreshToken{
 		userService:    userService,
 		userRepository: userRepository,

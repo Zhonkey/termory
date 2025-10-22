@@ -2,6 +2,7 @@ package app
 
 import (
 	"time"
+	"trainer/internal/application"
 	"trainer/internal/application/usecase"
 	"trainer/internal/domain/user"
 	"trainer/internal/infrastructure"
@@ -10,6 +11,7 @@ import (
 
 type Container struct {
 	DB             *database.DB
+	TokenManager   application.TokenManager
 	AccessTokenUC  *usecase.AccessToken
 	RefreshTokenUC *usecase.RefreshToken
 	CreateUserUC   *usecase.CreateUser
@@ -23,12 +25,12 @@ func NewContainer(db *database.DB) (*Container, error) {
 	userRepo := database.NewUserRepository(db)
 
 	passwordHasher := infrastructure.NewBcryptHasher(10)
-	jwtManager := &infrastructure.JwtManager{}
+	tokenManager := &infrastructure.JwtManager{}
 
 	userService := user.NewService(userRepo, passwordHasher, time.Hour*24*30)
 
-	accessTokenUC := usecase.NewAccessToken(userService, userRepo, jwtManager)
-	refreshTokenUC := usecase.NewRefreshToken(userService, userRepo, jwtManager)
+	accessTokenUC := usecase.NewAccessToken(userService, userRepo, tokenManager)
+	refreshTokenUC := usecase.NewRefreshToken(userService, userRepo, tokenManager)
 	createUserUC := usecase.NewCreateUser(userService, userRepo)
 	updateUserUC := usecase.NewUpdateUser(userService, userRepo)
 	deleteUserUC := usecase.NewDeleteUser(userRepo)
@@ -37,6 +39,7 @@ func NewContainer(db *database.DB) (*Container, error) {
 
 	c := Container{
 		db,
+		tokenManager,
 		accessTokenUC,
 		refreshTokenUC,
 		createUserUC,

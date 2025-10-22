@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 	"trainer/internal/app"
+	"trainer/internal/domain/user"
 	"trainer/internal/interfaces/http/middleware"
 
 	"trainer/internal/infrastructure/database"
@@ -36,9 +37,9 @@ func (s *Server) Run(ctx context.Context) error {
 	tokenHandler := handler.NewAuthTokenHandler(c.AccessTokenUC, c.RefreshTokenUC)
 	userHandler := handler.NewUserHandler(c.CreateUserUC, c.UpdateUserUC, c.DeleteUserUC, c.GetUserUC, c.ListUserUC)
 
-	authMiddleware := middleware.AuthMiddleware(c.TokenService)
-	adminMiddleware := middleware.RoleMiddleware("admin")
-	mentorMiddleware := middleware.RoleMiddleware("admin", "mentor")
+	authMiddleware := middleware.AuthMiddleware(c.TokenManager)
+	adminMiddleware := middleware.RoleMiddleware(user.RoleAdmin)
+	mentorMiddleware := middleware.RoleMiddleware(user.RoleAdmin, user.RoleMentor)
 
 	router := NewRouter(authMiddleware, adminMiddleware, mentorMiddleware, userHandler, tokenHandler)
 
