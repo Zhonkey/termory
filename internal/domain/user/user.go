@@ -1,7 +1,6 @@
 package user
 
 import (
-	"errors"
 	"regexp"
 	"time"
 
@@ -43,15 +42,15 @@ const (
 
 func newUser(email, firstName, lastName, hashedPassword string, role Role) (*User, error) {
 	if err := validateEmail(email); err != nil {
-		return nil, err
+		return nil, ErrInvalidEmail
 	}
 
 	if hashedPassword == "" {
-		return nil, errors.New("password must not be empty")
+		return nil, ErrEmptyPassword
 	}
 
 	if !isValidRole(role) {
-		return nil, errors.New("invalid role")
+		return nil, ErrInvalidRole
 	}
 
 	now := time.Now()
@@ -81,19 +80,20 @@ func (u *User) updateProfile(firstName, lastName, email string) error {
 
 	if email != "" && email != u.Email {
 		if err := validateEmail(email); err != nil {
-			return err
+			return ErrInvalidEmail
 		}
 
 		u.Email = email
 	}
 
 	u.UpdatedAt = time.Now()
+
 	return nil
 }
 
 func (u *User) updatePassword(newHashedPassword string) error {
 	if newHashedPassword == "" {
-		return errors.New("password cannot be empty")
+		return ErrEmptyPassword
 	}
 
 	u.Password = newHashedPassword
@@ -110,7 +110,7 @@ func (u *User) addRefreshToken(newToken *RefreshToken) error {
 func (u *User) revokeRefreshToken(tokenID uuid.UUID) error {
 	token, exists := u.refreshTokens[tokenID]
 	if !exists {
-		return errors.New("refresh token not found")
+		return ErrInvalidRefreshToken
 	}
 
 	u.revokedTokens[tokenID] = token
@@ -150,11 +150,11 @@ var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-
 
 func validateEmail(email string) error {
 	if email == "" {
-		return errors.New("email cannot be empty")
+		return ErrEmptyEmail
 	}
 
 	if !emailRegex.MatchString(email) {
-		return errors.New("invalid email format")
+		return ErrInvalidEmail
 	}
 
 	return nil

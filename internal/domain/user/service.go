@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -30,15 +29,15 @@ func NewService(repo Repository, hasher PasswordHasher, refreshDuration time.Dur
 func (s *Service) Login(ctx context.Context, email, password string) (*User, error) {
 	user, err := s.repo.FindByEmail(ctx, email)
 	if err != nil {
-		return nil, err
+		return nil, ErrNotFound
 	}
 
 	if user == nil {
-		return nil, errors.New("User not found")
+		return nil, ErrNotFound
 	}
 
 	if checkPassword := s.checkPassword(user, password); !checkPassword {
-		return nil, errors.New("Invalid password")
+		return nil, ErrInvalidPassword
 	}
 
 	return user, nil
@@ -47,7 +46,7 @@ func (s *Service) Login(ctx context.Context, email, password string) (*User, err
 func (s *Service) NewUser(ctx context.Context, email, firstName, lastName, password, role string) (*User, error) {
 	hashedPassword, err := s.hasher.Hash(password)
 	if err != nil {
-		return nil, err
+		return nil, ErrInvalidPassword
 	}
 
 	return newUser(email, firstName, lastName, hashedPassword, RoleMentor)
@@ -56,17 +55,17 @@ func (s *Service) NewUser(ctx context.Context, email, firstName, lastName, passw
 func (s *Service) UpdateUser(user *User, firstName, lastName, email, password string) error {
 	err := user.updateProfile(firstName, lastName, email)
 	if err != nil {
-		return err
+		return ErrFailedUpdate
 	}
 
 	if password != "" {
 		hashedPassword, err := s.hasher.Hash(password)
 		if err != nil {
-			return err
+			return ErrInvalidPassword
 		}
 		err = user.updatePassword(hashedPassword)
 		if err != nil {
-			return err
+			return ErrInvalidPassword
 		}
 	}
 
@@ -76,12 +75,12 @@ func (s *Service) UpdateUser(user *User, firstName, lastName, email, password st
 func (s *Service) CreateRefreshToken(ctx context.Context, u *User) (*RefreshToken, error) {
 	newToken, err := newRefreshToken(s.refreshDuration)
 	if err != nil {
-		return nil, err
+		return nil, ErrTokenRefresh
 	}
 
 	err = u.addRefreshToken(newToken)
 	if err != nil {
-		return nil, err
+		return nil, ErrTokenRefresh
 	}
 
 	return newToken, nil
@@ -90,13 +89,13 @@ func (s *Service) CreateRefreshToken(ctx context.Context, u *User) (*RefreshToke
 func (s *Service) RenewRefreshToken(ctx context.Context, u *User, token uuid.UUID) (*RefreshToken, error) {
 	err := u.revokeRefreshToken(token)
 	if err != nil {
-		return nil, err
+		return nil, ErrTokenRefresh
 	}
 
 	newToken, err := s.CreateRefreshToken(ctx, u)
 
 	if err != nil {
-		return nil, err
+		return nil, ErrTokenRefresh
 	}
 
 	return newToken, nil
