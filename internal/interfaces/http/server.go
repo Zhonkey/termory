@@ -18,13 +18,15 @@ import (
 )
 
 type Server struct {
-	db         *database.DB
-	httpServer *http.Server
+	db             *database.DB
+	allowedDomains string
+	httpServer     *http.Server
 }
 
-func NewServer(db *database.DB) *Server {
+func NewServer(db *database.DB, allowedDomains string) *Server {
 	return &Server{
-		db: db,
+		db:             db,
+		allowedDomains: allowedDomains,
 	}
 }
 
@@ -41,7 +43,14 @@ func (s *Server) Run(ctx context.Context) error {
 	adminMiddleware := middleware.RoleMiddleware(user.RoleAdmin)
 	mentorMiddleware := middleware.RoleMiddleware(user.RoleAdmin, user.RoleMentor)
 
-	router := NewRouter(authMiddleware, adminMiddleware, mentorMiddleware, userHandler, tokenHandler)
+	router := NewRouter(
+		authMiddleware,
+		adminMiddleware,
+		mentorMiddleware,
+		middleware.CORS(s.allowedDomains),
+		userHandler,
+		tokenHandler,
+	)
 
 	port := os.Getenv("PORT")
 	if port == "" {

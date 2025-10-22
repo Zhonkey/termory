@@ -52,7 +52,7 @@ func (s *Service) NewUser(ctx context.Context, email, firstName, lastName, passw
 
 	//validate Email/Password e.t.c.
 
-	return newUser(email, firstName, lastName, hashedPassword, Role(role))
+	return newUser(email, firstName, lastName, hashedPassword, RoleMentor)
 }
 
 func (s *Service) UpdateUser(user *User, firstName, lastName, email, password string) error {

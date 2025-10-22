@@ -4,7 +4,7 @@
 
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
-    <form @submit.prevent="login">
+    <form @submit.prevent="handleLogin">
       <div class="mb-3">
         <label>{{ t('app.email') }}:</label>
         <input v-model="email" class="form-control" type="email" required />

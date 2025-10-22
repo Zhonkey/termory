@@ -21,7 +21,7 @@ func main() {
 	}
 	defer db.Close()
 
-	srv := http.NewServer(db)
+	srv := http.NewServer(db, os.Getenv("CORS_ALLOWED_ORIGINS"))
 	if err := srv.Run(ctx); err != nil {
 		log.Fatalf("server run: %v", err)
 	}

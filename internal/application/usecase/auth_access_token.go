@@ -45,7 +45,7 @@ func (a *AccessToken) Execute(ctx context.Context, req dto.AccessTokenRequest) (
 		return nil, err
 	}
 
-	errSave := a.userRepository.Save(ctx, loggedUser)
+	errSave := a.userRepository.Update(ctx, loggedUser)
 	if errSave != nil {
 		return nil, errSave
 	}

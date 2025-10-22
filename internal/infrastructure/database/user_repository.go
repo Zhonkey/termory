@@ -189,6 +189,10 @@ func (r *UserRepository) scanUser(ctx context.Context, row pgx.Row) (*user.User,
 	)
 
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 

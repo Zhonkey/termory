@@ -18,12 +18,16 @@ func NewRouter(
 	authMiddleware mux.MiddlewareFunc,
 	adminMiddleware mux.MiddlewareFunc,
 	mentorMiddleware mux.MiddlewareFunc,
+	corsMiddleware mux.MiddlewareFunc,
 	userHandler *handler.UserHandler,
 	loginHandler *handler.AuthHandler,
 ) http.Handler {
 	r := mux.NewRouter()
 
-	//r.Use(corsMiddleware)
+	r.Use(corsMiddleware)
+	r.Methods(http.MethodOptions).HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
 
 	r.HandleFunc("/swagger.json", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -41,6 +45,7 @@ func NewRouter(
 
 	r.HandleFunc("/auth/access_token", loginHandler.AccessToken).Methods("POST")
 	r.HandleFunc("/auth/refresh_token", loginHandler.RefreshToken).Methods("POST")
+	r.HandleFunc("/users", userHandler.CreateUser).Methods("PUT")
 
 	api := r.PathPrefix("/api").Subrouter()
 	api.Use(authMiddleware)
@@ -48,7 +53,6 @@ func NewRouter(
 	adminRoutes := api.PathPrefix("/admin").Subrouter()
 	adminRoutes.Use(adminMiddleware)
 	adminRoutes.HandleFunc("/users", userHandler.ListUser).Methods("GET")
-	adminRoutes.HandleFunc("/users", userHandler.CreateUser).Methods("PUT")
 	adminRoutes.HandleFunc("/users/{id}", userHandler.UpdateUser).Methods("POST")
 	adminRoutes.HandleFunc("/users/{id}", userHandler.GetUser).Methods("GET")
 	adminRoutes.HandleFunc("/users/{id}", userHandler.DeleteUser).Methods("DELETE")

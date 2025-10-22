@@ -46,14 +46,6 @@ func newUser(email, firstName, lastName, hashedPassword string, role Role) (*Use
 		return nil, err
 	}
 
-	if firstName == "" {
-		return nil, errors.New("name must not be empty")
-	}
-
-	if lastName == "" {
-		return nil, errors.New("name must not be empty")
-	}
-
 	if hashedPassword == "" {
 		return nil, errors.New("password must not be empty")
 	}

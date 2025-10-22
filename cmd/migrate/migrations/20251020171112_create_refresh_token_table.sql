@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE refresh_tokens (
     id UUID NOT NULL PRIMARY KEY,
-    user_id UUID NOT NULL UNIQUE,
+    user_id UUID NOT NULL,
     expires_at TIMESTAMP,
     created_at TIMESTAMP
 );

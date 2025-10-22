@@ -1,2 +1,3 @@
 docker-compose.env.local
 vue/dist
+bin
