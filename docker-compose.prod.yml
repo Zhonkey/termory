@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: trainer-api-prod
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_DSN=user=trainer password=trainer host=db port=5432 dbname=trainer sslmode=disable
+      - DB_DRIVER=pgx
+      - PORT=8080
+      - ENV=production
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - trainer-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  db:
+    image: postgres:18-alpine
+    container_name: trainer-db-prod
+    environment:
+      - POSTGRES_PASSWORD=trainer
+      - POSTGRES_DB=trainer
+      - POSTGRES_USER=trainer
+    ports:
+      - "5432:5432"
+    volumes:
+      - trainer-postgres-prod:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - trainer-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trainer -d trainer"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  trainer-network:
+    driver: bridge
+
+volumes:
+  trainer-postgres-prod:

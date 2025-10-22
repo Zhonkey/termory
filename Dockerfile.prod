@@ -1,0 +1,56 @@
+# Multi-stage build для production
+FROM golang:1.22-alpine AS builder
+
+WORKDIR /build
+
+# Установка зависимостей
+RUN apk add --no-cache git ca-certificates tzdata
+
+# Копирование go.mod и go.sum
+COPY go.mod go.sum ./
+
+# Загрузка зависимостей
+RUN go mod download
+
+# Копирование исходного кода
+COPY . .
+
+# Сборка API сервера
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+    -ldflags="-w -s" \
+    -o /build/api ./cmd/api/main.go
+
+# Сборка миграционного инструмента
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+    -ldflags="-w -s" \
+    -o /build/migrate ./cmd/migrate/main.go
+
+# Final stage - минимальный образ
+FROM alpine:latest
+
+WORKDIR /app
+
+# Установка необходимых пакетов
+RUN apk add --no-cache tzdata postgresql-client
+
+# Копирование бинарников из builder
+COPY --from=builder /build/api /app/api
+COPY --from=builder /build/migrate /app/migrate
+
+# Копирование миграций
+COPY cmd/migrate/migrations /app/migrations
+
+# Создание непривилегированного пользователя
+RUN addgroup -g 1000 appuser && \
+    adduser -D -u 1000 -G appuser appuser && \
+    chown -R appuser:appuser /app
+
+USER appuser
+
+EXPOSE 8080
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+
+CMD ["/app/api"]
