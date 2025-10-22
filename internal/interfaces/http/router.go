@@ -23,7 +23,6 @@ func NewRouter(
 ) http.Handler {
 	r := mux.NewRouter()
 
-	r.Use(authMiddleware)
 	//r.Use(corsMiddleware)
 
 	r.HandleFunc("swagger.json", func(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +32,7 @@ func NewRouter(
 
 	r.HandleFunc("/swagger", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
-		w.Write([]byte(swaggerHTML))
+		w.Write(swaggerHTML)
 	}).Methods("GET")
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
