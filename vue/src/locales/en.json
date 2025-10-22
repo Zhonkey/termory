@@ -1,0 +1,25 @@
+{
+  "app": {
+    "title": "Mini App",
+    "login": "Login",
+    "users": "Users",
+    "auth": "Authorisation",
+    "email": "Email",
+    "password": "Password",
+    "repeat_password": "Repeat Password",
+    "register": "Register"
+  },
+  "login": {
+    "email": "Email",
+    "password": "Password",
+    "button": "Sign In"
+  },
+  "user": {
+    "list": "User List",
+    "edit": "Edit User",
+    "view": "View User"
+  },
+  "error": {
+    "passwords_not_same": "Passwords should be equal"
+  }
+}

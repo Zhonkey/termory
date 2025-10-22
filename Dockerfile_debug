@@ -1,0 +1,12 @@
+FROM golang:1.25
+
+WORKDIR /app
+COPY . .
+
+RUN go install github.com/go-delve/delve/cmd/dlv@latest
+
+RUN go build -gcflags "all=-N -l" -o myapp .
+
+EXPOSE 2345
+
+CMD ["dlv", "exec", "./myapp", "--headless", "--listen=:2345", "--api-version=2", "--accept-multiclient"]

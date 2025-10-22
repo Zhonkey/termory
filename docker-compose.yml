@@ -1,0 +1,35 @@
+services:
+  app:
+    build: .
+    ports:
+      - "2345:2345"
+      - "8090:8090"
+      - "30002:8080"
+    security_opt:
+      - "apparmor=unconfined"
+    env_file:
+      - docker-compose.env
+      - docker-compose.env.local
+    volumes:
+    - .:/app
+    - ~/.local/share/go/trainer/pkg/mod:/go/pkg/mod
+
+  db:
+    image: postgres:18
+    ports:
+      - "30000:5432"
+    volumes:
+      - /var/lib/trainer-postgres:/var/lib/postgresql/data:delegated
+    environment:
+      - POSTGRES_PASSWORD=trainer
+      - POSTGRES_DB=trainer
+      - POSTGRES_USER=trainer
+
+  vue:
+    build: ./vue
+    ports:
+      - "30001:5173"
+    volumes:
+      - ./vue:/app
+      - /app/node_modules
+    command: npm run dev -- --host

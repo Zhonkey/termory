@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/fd6621e1-4e30-4aa9-b21a-d77198843261/console.sql" value="fd6621e1-4e30-4aa9-b21a-d77198843261" />
+    <file url="file://$PROJECT_DIR$/internal/infrastructure/database/user_repository.go" value="fd6621e1-4e30-4aa9-b21a-d77198843261" />
+  </component>
+</project>
