@@ -96,7 +96,7 @@ func handlerMain() {
 
 func main() {
 	//apiKey := os.Getenv("OPENAI_API_KEY") // Ключ API из переменной окружения
-	apiKey := "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"
+	apiKey := ""
 	//if apiKey == "" {
 	//	log.Fatal("Установите OPENAI_API_KEY")
 	//}
